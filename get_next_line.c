@@ -1,0 +1,103 @@
+#include "get_next_line.h"
+
+int	remains_n(char **remains, char **line)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	if (!*remains)
+		return (0);
+	len = ft_strlen(*remains);
+	while ((*remains)[i] != '\0' && (*remains)[i] != '\n')
+		i++;
+	if (i < len)
+	{
+		(*remains)[i] = '\0';
+		*line = ft_strjoin(NULL, *remains, NULL);
+		*remains = ft_strjoin(NULL, (*remains) + i + 1, remains);
+		return (1);
+	}
+	return (0);
+}
+
+int buf_check(char *buf)
+{
+	int	i;
+
+	i = 0;
+	while (buf[i] != '\0' && buf[i] != '\n')
+		i++;
+	buf[i] = '\0';
+	return (i);
+}
+
+int	read_file(int fd, char *buf, char **line, ssize_t len)
+{
+	static char	*remains;
+	int			k;
+	int			i;
+
+	k = remains_n(&remains, line);
+	while (!k && len)
+	{
+		len = read(fd, buf, BUFFER_SIZE);
+		if (len < 0)
+			return (-1);
+		buf[len] = '\0';
+		i = buf_check(buf);
+		if (i < len)
+		{
+			*line = ft_strjoin(remains, buf, NULL);
+			remains = ft_strjoin(NULL, buf + i + 1, &remains);
+			k = 1;
+		}
+		else if (len == 0)
+			*line = ft_strjoin(NULL, remains, &remains);
+		else
+			remains = ft_strjoin(remains, buf, &remains);
+	}
+	free (buf);
+	return (k);
+}
+
+int	get_next_line(int fd, char **line)
+{
+	char	*buf;
+	int		k;
+	ssize_t	len;
+
+	k = 0;
+	len = 1;
+	if (fd < 0 || !line || BUFFER_SIZE <= 0)
+		return (-1);
+	*line = NULL;
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
+		return (-1);
+	k = read_file(fd, buf, line, len);
+	if (k < 0)
+		free(buf);
+	return (k);
+}
+
+// #include <stdio.h>
+// #include <sys/types.h>
+// #include <sys/uio.h>
+// #include <unistd.h>
+// #include <fcntl.h>
+
+// int	main(void)
+// {
+// 	int		fd;
+// 	int		i;
+// 	char	*line;
+
+
+// 	fd = open("test_file9", O_RDONLY);
+// 	i = get_next_line(fd, &line);
+// 	printf("i = %d %s\n\n", i, line);
+
+// 	i = get_next_line(fd, &line);
+// 	printf("i = %d %s\n\n", i, line);
+// }
