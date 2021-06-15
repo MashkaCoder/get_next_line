@@ -80,24 +80,3 @@ int	get_next_line(int fd, char **line)
 		free(buf);
 	return (k);
 }
-
-// #include <stdio.h>
-// #include <sys/types.h>
-// #include <sys/uio.h>
-// #include <unistd.h>
-// #include <fcntl.h>
-
-// int	main(void)
-// {
-// 	int		fd;
-// 	int		i;
-// 	char	*line;
-
-
-// 	fd = open("test_file9", O_RDONLY);
-// 	i = get_next_line(fd, &line);
-// 	printf("i = %d %s\n\n", i, line);
-
-// 	i = get_next_line(fd, &line);
-// 	printf("i = %d %s\n\n", i, line);
-// }
