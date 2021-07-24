@@ -21,7 +21,7 @@ int	remains_n(char **remains, char **line)
 	return (0);
 }
 
-int buf_check(char *buf)
+int	buf_check(char *buf)
 {
 	int	i;
 
